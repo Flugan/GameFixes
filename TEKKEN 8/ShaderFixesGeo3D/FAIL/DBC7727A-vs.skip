@@ -1,0 +1,186 @@
+;
+; Input signature:
+;
+; Name                 Index   Mask Register SysValue  Format   Used
+; -------------------- ----- ------ -------- -------- ------- ------
+; ATTRIBUTE                0   xyzw        0     NONE   float   xyzw
+; ATTRIBUTE                1   xy          1     NONE   float   xy  
+;
+;
+; Output signature:
+;
+; Name                 Index   Mask Register SysValue  Format   Used
+; -------------------- ----- ------ -------- -------- ------- ------
+; TEXCOORD                 0   xyzw        0     NONE   float   xyzw
+; SV_Position              0   xyzw        1      POS   float   xyzw
+;
+; shader hash: 98730d699dbd65ebcc7a3598e2ccb3f6
+;
+; Pipeline Runtime Information: 
+;
+; Vertex Shader
+; OutputPositionPresent=1
+;
+;
+; Input signature:
+;
+; Name                 Index             InterpMode DynIdx
+; -------------------- ----- ---------------------- ------
+; ATTRIBUTE                0                              
+; ATTRIBUTE                1                              
+;
+; Output signature:
+;
+; Name                 Index             InterpMode DynIdx
+; -------------------- ----- ---------------------- ------
+; TEXCOORD                 0          noperspective       
+; SV_Position              0          noperspective       
+;
+; Buffer Definitions:
+;
+; cbuffer UniformBufferConstants_DrawRectangleParameters
+; {
+;
+;   struct UniformBufferConstants_DrawRectangleParameters
+;   {
+;
+;       float4 DrawRectangleParameters_PosScaleBias;  ; Offset:    0
+;       float4 DrawRectangleParameters_UVScaleBias;   ; Offset:   16
+;       float4 DrawRectangleParameters_InvTargetSizeAndTextureSize;; Offset:   32
+;   
+;   } UniformBufferConstants_DrawRectangleParameters; ; Offset:    0 Size:    48
+;
+; }
+;
+;
+; Resource Bindings:
+;
+; Name                                 Type  Format         Dim      ID      HLSL Bind  Count
+; ------------------------------ ---------- ------- ----------- ------- -------------- ------
+; UniformBufferConstants_DrawRectangleParameters   cbuffer      NA          NA     CB0            cb0     1
+;
+;
+; ViewId state:
+;
+; Number of inputs: 6, outputs: 8
+; Outputs dependent on ViewId: {  }
+; Inputs contributing to computation of Outputs:
+;   output 0 depends on inputs: { 4 }
+;   output 1 depends on inputs: { 5 }
+;   output 2 depends on inputs: { 0 }
+;   output 3 depends on inputs: { 1 }
+;   output 4 depends on inputs: { 0 }
+;   output 5 depends on inputs: { 1 }
+;   output 6 depends on inputs: { 2 }
+;   output 7 depends on inputs: { 3 }
+;
+target datalayout = "e-m:e-p:32:32-i1:32-i8:32-i16:32-i32:32-i64:64-f16:32-f32:32-f64:64-n8:16:32:64"
+target triple = "dxil-ms-dx"
+
+%dx.types.Handle = type { i8* }
+%dx.types.ResBind = type { i32, i32, i32, i8 }
+%dx.types.ResourceProperties = type { i32, i32 }
+%dx.types.CBufRet.f32 = type { float, float, float, float }
+%UniformBufferConstants_DrawRectangleParameters = type { <4 x float>, <4 x float>, <4 x float> }
+
+define void @ScreenPassVS() {
+  %1 = call %dx.types.Handle @dx.op.createHandleFromBinding(i32 217, %dx.types.ResBind { i32 0, i32 0, i32 0, i8 2 }, i32 0, i1 false)  ; CreateHandleFromBinding(bind,index,nonUniformIndex)
+  %2 = call %dx.types.Handle @dx.op.annotateHandle(i32 216, %dx.types.Handle %1, %dx.types.ResourceProperties { i32 13, i32 48 })  ; AnnotateHandle(res,props)  resource: CBuffer
+  %3 = call float @dx.op.loadInput.f32(i32 4, i32 1, i32 0, i8 0, i32 undef)  ; LoadInput(inputSigId,rowIndex,colIndex,gsVertexAxis)
+  %4 = call float @dx.op.loadInput.f32(i32 4, i32 1, i32 0, i8 1, i32 undef)  ; LoadInput(inputSigId,rowIndex,colIndex,gsVertexAxis)
+  %5 = call float @dx.op.loadInput.f32(i32 4, i32 0, i32 0, i8 0, i32 undef)  ; LoadInput(inputSigId,rowIndex,colIndex,gsVertexAxis)
+  %6 = call float @dx.op.loadInput.f32(i32 4, i32 0, i32 0, i8 1, i32 undef)  ; LoadInput(inputSigId,rowIndex,colIndex,gsVertexAxis)
+  %7 = call float @dx.op.loadInput.f32(i32 4, i32 0, i32 0, i8 2, i32 undef)  ; LoadInput(inputSigId,rowIndex,colIndex,gsVertexAxis)
+  %8 = call float @dx.op.loadInput.f32(i32 4, i32 0, i32 0, i8 3, i32 undef)  ; LoadInput(inputSigId,rowIndex,colIndex,gsVertexAxis)
+  %9 = call %dx.types.CBufRet.f32 @dx.op.cbufferLoadLegacy.f32(i32 59, %dx.types.Handle %2, i32 0)  ; CBufferLoadLegacy(handle,regIndex)
+  %10 = extractvalue %dx.types.CBufRet.f32 %9, 2
+  %11 = extractvalue %dx.types.CBufRet.f32 %9, 3
+  %12 = extractvalue %dx.types.CBufRet.f32 %9, 0
+  %13 = extractvalue %dx.types.CBufRet.f32 %9, 1
+  %14 = fmul fast float %12, %5
+  %15 = fmul fast float %13, %6
+  %16 = fadd fast float %14, %10
+  %17 = fadd fast float %15, %11
+  %18 = call %dx.types.CBufRet.f32 @dx.op.cbufferLoadLegacy.f32(i32 59, %dx.types.Handle %2, i32 2)  ; CBufferLoadLegacy(handle,regIndex)
+  %19 = extractvalue %dx.types.CBufRet.f32 %18, 0
+  %20 = extractvalue %dx.types.CBufRet.f32 %18, 1
+  %21 = fmul fast float %19, 2.000000e+00
+  %22 = fmul fast float %21, %16
+  %23 = fmul fast float %20, 2.000000e+00
+  %24 = fmul fast float %23, %17
+  %25 = fadd fast float %22, -1.000000e+00
+  %26 = fadd fast float %24, -1.000000e+00
+  %27 = fsub fast float -0.000000e+00, %26
+  %28 = call %dx.types.CBufRet.f32 @dx.op.cbufferLoadLegacy.f32(i32 59, %dx.types.Handle %2, i32 1)  ; CBufferLoadLegacy(handle,regIndex)
+  %29 = extractvalue %dx.types.CBufRet.f32 %28, 2
+  %30 = extractvalue %dx.types.CBufRet.f32 %28, 3
+  %31 = extractvalue %dx.types.CBufRet.f32 %28, 0
+  %32 = extractvalue %dx.types.CBufRet.f32 %28, 1
+  %33 = fmul fast float %31, %3
+  %34 = fmul fast float %32, %4
+  %35 = fadd fast float %33, %29
+  %36 = fadd fast float %34, %30
+  %37 = extractvalue %dx.types.CBufRet.f32 %18, 2
+  %38 = extractvalue %dx.types.CBufRet.f32 %18, 3
+  %39 = fmul fast float %35, %37
+  %40 = fmul fast float %36, %38
+  call void @dx.op.storeOutput.f32(i32 5, i32 1, i32 0, i8 0, float %25)  ; StoreOutput(outputSigId,rowIndex,colIndex,value)
+  call void @dx.op.storeOutput.f32(i32 5, i32 1, i32 0, i8 1, float %27)  ; StoreOutput(outputSigId,rowIndex,colIndex,value)
+  call void @dx.op.storeOutput.f32(i32 5, i32 1, i32 0, i8 2, float %7)  ; StoreOutput(outputSigId,rowIndex,colIndex,value)
+  call void @dx.op.storeOutput.f32(i32 5, i32 1, i32 0, i8 3, float %8)  ; StoreOutput(outputSigId,rowIndex,colIndex,value)
+  call void @dx.op.storeOutput.f32(i32 5, i32 0, i32 0, i8 0, float %39)  ; StoreOutput(outputSigId,rowIndex,colIndex,value)
+  call void @dx.op.storeOutput.f32(i32 5, i32 0, i32 0, i8 1, float %40)  ; StoreOutput(outputSigId,rowIndex,colIndex,value)
+  call void @dx.op.storeOutput.f32(i32 5, i32 0, i32 0, i8 2, float %25)  ; StoreOutput(outputSigId,rowIndex,colIndex,value)
+  call void @dx.op.storeOutput.f32(i32 5, i32 0, i32 0, i8 3, float %27)  ; StoreOutput(outputSigId,rowIndex,colIndex,value)
+  ret void
+}
+
+; Function Attrs: nounwind readnone
+declare float @dx.op.loadInput.f32(i32, i32, i32, i8, i32) #0
+
+; Function Attrs: nounwind
+declare void @dx.op.storeOutput.f32(i32, i32, i32, i8, float) #1
+
+; Function Attrs: nounwind readonly
+declare %dx.types.CBufRet.f32 @dx.op.cbufferLoadLegacy.f32(i32, %dx.types.Handle, i32) #2
+
+; Function Attrs: nounwind readnone
+declare %dx.types.Handle @dx.op.annotateHandle(i32, %dx.types.Handle, %dx.types.ResourceProperties) #0
+
+; Function Attrs: nounwind readnone
+declare %dx.types.Handle @dx.op.createHandleFromBinding(i32, %dx.types.ResBind, i32, i1) #0
+
+attributes #0 = { nounwind readnone }
+attributes #1 = { nounwind }
+attributes #2 = { nounwind readonly }
+
+!llvm.ident = !{!0}
+!dx.version = !{!1}
+!dx.valver = !{!2}
+!dx.shaderModel = !{!3}
+!dx.resources = !{!4}
+!dx.viewIdState = !{!7}
+!dx.entryPoints = !{!8}
+
+!0 = !{!"dxc(private) 1.7.0.0 (private, 00000000)"}
+!1 = !{i32 1, i32 6}
+!2 = !{i32 1, i32 7}
+!3 = !{!"vs", i32 6, i32 6}
+!4 = !{null, null, !5, null}
+!5 = !{!6}
+!6 = !{i32 0, %UniformBufferConstants_DrawRectangleParameters* undef, !"", i32 0, i32 0, i32 1, i32 48, null}
+!7 = !{[8 x i32] [i32 6, i32 8, i32 20, i32 40, i32 64, i32 128, i32 1, i32 2]}
+!8 = !{void ()* @ScreenPassVS, !"ScreenPassVS", !9, !4, !20}
+!9 = !{!10, !17, null}
+!10 = !{!11, !14}
+!11 = !{i32 0, !"ATTRIBUTE", i8 9, i8 0, !12, i8 0, i32 1, i8 4, i32 0, i8 0, !13}
+!12 = !{i32 0}
+!13 = !{i32 3, i32 15}
+!14 = !{i32 1, !"ATTRIBUTE", i8 9, i8 0, !15, i8 0, i32 1, i8 2, i32 1, i8 0, !16}
+!15 = !{i32 1}
+!16 = !{i32 3, i32 3}
+!17 = !{!18, !19}
+!18 = !{i32 0, !"TEXCOORD", i8 9, i8 0, !12, i8 4, i32 1, i8 4, i32 0, i8 0, !13}
+!19 = !{i32 1, !"SV_Position", i8 9, i8 3, !12, i8 4, i32 1, i8 4, i32 1, i8 0, !13}
+!20 = !{i32 5, !12}
+ 
